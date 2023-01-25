@@ -1,17 +1,17 @@
 import discord
+from discord.ext import commands
+ 
 
-intents = discord.Intents.default()
+intents= discord.Intents.default()
 intents.message_content = True
+client= commands.Bot(command_prefix='$', intents= intents)
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print(f'Logged on as {self.user}!')
-
-    async def on_message(self, message):
-        if message.author == self.user:
-            return
-        if message.content.startswith('$start'):
-            await self.user.dm_channel('Hello!')
-            
-
-client = MyClient(intents=intents)
+@client.event
+async def on_ready():
+    print('Bot On!')
+    
+@client.command()
+async def start(ctx):
+    await ctx.author.send("""
+                          WELCOME TO THE GAME OF THE YEAR\
+                              TWITCH SUPPORT IS A TRASH!""")
