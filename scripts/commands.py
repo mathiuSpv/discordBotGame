@@ -36,7 +36,7 @@ async def cls(ctx, *, amount: int): #CLEAR DE CHAT DISCORD CHANNEL.
 
 @cls.error
 async def cls_error(ctx, error):
-    print(f"{ctx.author} try $cls but raise error")
+    """Raise error on $cls command"""
     await ctx.channel.purge(limit= 255)
     
     
