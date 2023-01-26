@@ -46,7 +46,11 @@ async def load(ctx, extension):
 async def unload(ctx, extension):
     client.unload_extension(f"cogs.{extension}")
 
-    
+
+for filename in os.listdir("./cogs"):
+    if filename.endswith(".py"):
+        client.load_extension(f"cogs.{filename[:-3]}")#Forma de poner que busque los archivos que terminan con 3 caracteres
+
 if __name__ == "__main__":
     with open("token.txt", mode= "r") as filetext:
         token= filetext.readline()
