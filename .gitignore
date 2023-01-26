@@ -4,5 +4,4 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 token.txt
-commands.exe
 __pycache__
