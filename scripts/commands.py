@@ -39,7 +39,13 @@ async def cls_error(ctx, error):
     print(f"{ctx.author} try $cls but raise error")
     await ctx.channel.purge(limit= 255)
     
-    
+@client.command()
+async def load(ctx, extension):
+    client.load_extension(f"cogs.{extension}")
+@client.command()
+async def unload(ctx, extension):
+    client.unload_extension(f"cogs.{extension}")
+
     
 if __name__ == "__main__":
     with open("token.txt", mode= "r") as filetext:
