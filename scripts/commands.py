@@ -14,20 +14,39 @@ async def on_ready():
     print(f'{client.user} is on!')
 
 
-
 @client.command()
-async def start(ctx): #FOR BEGINERS REGISTRATION
-    list= ['\U0001F47E',]
+async def start(ctx):
+    """First steps of registation function"""
+
     await ctx.message.add_reaction('\U0001F47E')
-    msg = await ctx.author.send("""ESTAMOS PROBANDO PORFAVOR REACCIONAR 👍""")
-    await msg.add_reaction('\U0001F47E')
-    check= lambda m: m.content == "ok" and m.channel ==  msg.channel
+    msg = await ctx.author.send(
+"""```Para poder registrarte escribeme:\n
+    **$rg username**\n
+Registrado, debes asignar tus puntos:\n
+    **$player stats**```""")
+    
+    def check(message):
+        return "$rg" in message.content and message.channel == msg.channel
+
     try:
-        msg= await client.wait_for('message' , timeout= 60, check= check)
-        await ctx.author.send(f"Tamos chelo {ctx.author}") 
+        msg = await client.wait_for('message' , timeout= 30, check= check)
+        if msg: await ctx.author.send("Well done!")
     except asyncio.TimeoutError:
-        await ctx.author.send("DALE FLACO METELE PILA")
+        await ctx.author.send("Time Out")
+    else:
+        pass
+
+@client.command(aliases= ["rg"])
+@start.after_invoke
+async def registration(ctx, *, arg= ""):
+    if arg.isalpha():
+        await ctx.author.send("Registro completado, asigna tus puntos y empeza a jugar")
+    else:
+        await ctx.author.send("El username solo deben ser letras")
         
+@registration.error
+async def registation_errors(ctx, error):
+    print(error)
 
 
 @client.command()
