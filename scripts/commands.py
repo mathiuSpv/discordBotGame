@@ -9,24 +9,28 @@ client= commands.Bot(command_prefix='$', intents= intents)
 
 def read_data():
     players_system= dict()
-    with open("./datauser.csv", mode= 'r') as file:
+    with open(f"./datausers.csv", mode= 'r') as file:
         players_list= file.readlines()
-    for user_id, user_name in players_list:
-        players_system[f'{user_id}']= user_name
+        file.close()
+    if players_list:
+        for data in players_list:
+            data= data.strip()
+            user_id, user_name= data.split(";")
+            players_system[f'{user_id}']= user_name
     return players_system
 
 players= read_data()
-client.change_presence(activity= discord.Game(name= "$start - DSRoleplay" ))
 
 @client.event
 async def on_ready():
+    await client.change_presence(activity= discord.Game(name= "Dark Era - Try to play \U000027A1  $start username" ))
     print(f'{client.user} is on!')
 
 
 @client.command(aliases= ["rg" ,"reg" ,"start"])
 async def registration(ctx, *, username= ""):
     
-    async def regist_user(user_id: str, user_name: str):
+    def regist_user(user_id: str, user_name: str):
         with open("./datausers.csv", mode= "a") as file:
             file.write(f"{user_id};{user_name}\n")
             file.close()
@@ -41,20 +45,19 @@ async def registration(ctx, *, username= ""):
             await ctx.author.send("A username is already used")
         else:
             await ctx.author.send("A username should be only have letters ")
-            
-    
-    if ctx.author.id in players:
-        await ctx.author.send("You are already register!")
+        
+    if str(ctx.author.id) in players:
+        await ctx.message.add_reaction('\U000026D4')
+        await ctx.author.send("You are already registered")
         return
     else:
         if username.isalpha():
             await ctx.message.add_reaction('\U0001F44D')
-            await regist_user(ctx.author.id, username , "None")
+            await regist_user(ctx.author.id, username)
             await ctx.author.send("Welcome to a news adventures")
         else:
             await ctx.message.add_reaction('\U0001F44E')
             await error_username(username)
-            await ctx.author.send("Remember you can only user Letter as a user name")
 
 # @client.command()
 # async def start(ctx):
