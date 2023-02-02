@@ -36,16 +36,16 @@ async def registration(ctx, *, username= ""):
             file.close()
         players[f'{user_id}']= user_name
     
-    async def error_username(username: str):
+    async def error_username():
         if username == "":
-            await ctx.author.send("You need a username")
+            return "You need a username"
         elif " " in username:
-            await ctx.author.send("A username cannot have spaces")
+            return "A username cannot have spaces"
         elif username in players.values():
-            await ctx.author.send("A username is already used")
+            return "A username is already used"
         else:
-            await ctx.author.send("A username should be only have letters ")
-        
+            return "A username should be only have letters "
+    
     if str(ctx.author.id) in players:
         await ctx.message.add_reaction('\U000026D4')
         await ctx.author.send("You are already registered")
@@ -57,7 +57,8 @@ async def registration(ctx, *, username= ""):
             await ctx.author.send("Welcome to a news adventures")
         else:
             await ctx.message.add_reaction('\U0001F44E')
-            await error_username(username)
+            message= error_username()
+            await ctx.author.send(message)
 
 # @client.command()
 # async def start(ctx):
