@@ -17,6 +17,9 @@ async def on_ready():
 @client.command(aliases= ["rg" ,"reg" ,"start"])
 async def registration(ctx, *, username= ""):
     
+    def check(reaction, user):
+        return str(reaction.emoji) in ['👍','👎'] and user == ctx.author
+    
     def error_username(*args, **kwargs):
         if username == "":
             return "You need a username"
@@ -26,27 +29,53 @@ async def registration(ctx, *, username= ""):
             return "A username is already used"
         else:
             return "A username should be only have letters "
-        
-    def check(reaction: discord.Reaction, user):
-         return user.id == ctx.author.id and reaction.message.channel.id == bot_msg.channel.id and str(reaction.emoji) in ['\U00002705','\U0000274c']
     
+
     if str(ctx.author.id) in players.playersList:
         await ctx.message.add_reaction('\U000026D4')
         await ctx.author.send("You are already registered")
         return
     else:
         if username.isalpha():
-            bot_msg= await ctx.author.send(f"```\n{username} is correct?```")
-            await bot_msg.message.add_reaction(['\U00002705','\U0000274c'])
+            bot_msg= await ctx.author.send(f"{username} is correct?```\n```")
+            await bot_msg.add_reaction("👍")
+            await bot_msg.add_reaction("👎")
+                
             try:
-                await client.wait_for('reaction_add' , timeout= 30, check= check)
-                players.new_player(ctx.author.id, username)
-                await ctx.author.send("Welcome to a news adventures")
+                reaction, user= await client.wait_for("reaction_add", check = check, timeout = 60.0)
             except asyncio.TimeoutError:
                 pass
+            else:
+                print("A")
+                if reaction.emoji == '👍':
+                    players.new_player(ctx.author.id, username)
+                    await ctx.author.send("Welcome to a news adventures")
+                
+                    await ctx.author.send("Then try again ```$start username```")
         else:
-            await ctx.message.add_reaction('\U0001F44E')
+            await ctx.message.add_reaction('\U000026D4')
             await ctx.author.send(error_username())
+
+@client.command()
+async def example(ctx):
+    user = ctx.message.author
+    private_channel = await user.create_dm()
+    message_bot = await private_channel.send("React with 👍 or 👎 to this message")
+    await message_bot.add_reaction("👍")
+    await message_bot.add_reaction("👎")
+
+    def check(reaction, user):
+        return user == ctx.message.author and str(reaction.emoji) in ["👍", "👎"]
+
+    try:
+        reaction, user = await client.wait_for("reaction_add", check=check, timeout=60.0)
+    except asyncio.TimeoutError:
+        await private_channel.send("Timed out.")
+    else:
+        if str(reaction.emoji) == "👍":
+            await private_channel.send("You reacted with 👍")
+        else:
+            await private_channel.send("You reacted with 👎")
 
 # @client.command()
 # async def start(ctx):
