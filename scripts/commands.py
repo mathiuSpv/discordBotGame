@@ -45,6 +45,7 @@ async def load(ctx, extension):
 @client.command()
 async def unload(ctx, extension):
     client.unload_extension(f"cogs.{extension}")
+#@client.command estoy haciendo el que va a mandar la imagen
 
 
 for filename in os.listdir("./cogs"):

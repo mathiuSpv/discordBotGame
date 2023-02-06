@@ -5,7 +5,7 @@ from itertools import cycle
 intents= discord.Intents.default()
 intents.message_content = True
 client= commands.Bot(command_prefix='$', intents= intents)
-status= cycle(["Morning", "Midday", "Night"])
+status= cycle(["Morning", "Midday","Evening" "Night"])
 
 @client.event
 async def on_ready():
