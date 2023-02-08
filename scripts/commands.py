@@ -2,12 +2,12 @@ import discord
 import asyncio
 import datetime
 from discord.ext import commands
-from dataScript import playersInfo
+from dataScript import playersDataStats
 
 intents= discord.Intents.default()
 intents.message_content = True
 client= commands.Bot(command_prefix='$', intents= intents)
-players= playersInfo("datausers")
+players= playersDataStats("datausers")
 register_status= {}
 
 
@@ -41,7 +41,7 @@ async def start(ctx, time= 15):
 async def register(ctx, *, username= ""):
     async def __error(*args, **kwargs):
         error= False
-        if ctx.author.id in players.userList:
+        if ctx.author.id in players.users:
             error= True
             await ctx.author.send("You are already registered")
         elif username == "":
