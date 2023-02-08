@@ -3,19 +3,20 @@
 class playersInfo():
     def __init__(self, filename):
         self.filename= filename
-        self.playersList= self.__players(filename)
+        self.userList= self.__users(filename)
     
-    def __players(self, filename):
+    def __users(self, filename):
         players_system= dict()
         with open(f"./{filename}.csv", mode= 'r') as file: players_list= file.readlines(); file.close()
         if players_list:
             for data in players_list:
-                user_id, user_name= data.strip().split(";")
-                players_system[f'{user_id}']= user_name
+                userID, userNAME= data.strip().split(";")
+                players_system[int(userID)]= userNAME
         return players_system
     
-    def new_player(self, user_id, user_name):
-        with open(f"{self.filename}.csv", mode= 'a') as file: file.write(f"{user_id};{user_name}\n"); file.close()
-        self.playersList[f'{user_id}']= user_name
+    def new_player(self, userID, userNAME):
+        """"Parameters: userID, userNAME"""
+        with open(f"{self.filename}.csv", mode= 'a') as file: file.write(f"{userID};{userNAME}\n"); file.close()
+        self.playersList[userID]= userNAME
         return
         
