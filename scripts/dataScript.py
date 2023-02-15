@@ -1,7 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, Float, String, Enum, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
-
 
 Base= declarative_base()
 
@@ -27,6 +26,7 @@ class PlayerFunctions():
         self.session = session
 
     def new_player(self, player_id):
+        """Create a data of new player: player_id and player_stats"""
         player = Player(player_discord_id= player_id)
         player_stats= PlayerStats(player_id= player_id, player_exp= 0, player_pts= 8,
                                   player_vig= 1, player_end= 1, player_str= 1, player_dex= 1, player_int= 1)
@@ -55,7 +55,7 @@ class PlayerFunctions():
         if player:
             return True
         else:
-            return False
+            return False        
         
     def get_stats(self, player_id):
         """Get stats as Dictionary with keys: exp, pts, vig, end, str, dex, int"""

@@ -2,12 +2,11 @@ import discord
 import asyncio
 import datetime
 from discord.ext import commands
-from dataScript import playersDataStats
+from dataScript import player
 
 intents= discord.Intents.default()
 intents.message_content = True
 client= commands.Bot(command_prefix='$', intents= intents)
-players= playersDataStats("datausers")
 register_status= {}
 
 
@@ -38,24 +37,12 @@ async def start(ctx, time= 15):
         await ctx.author.send("Time out!")
 
 @client.command(aliases= ["rg" ,"reg"])
-async def register(ctx, *, username= ""):
+async def register(ctx):
     async def __error(*args, **kwargs):
         error= False
-        if ctx.author.id in players.users:
+        if player .get_user(ctx.author.id):
             error= True
             await ctx.author.send("You are already registered")
-        elif username == "":
-            error= True
-            await ctx.author.send("You need a username")
-        elif " " in username:
-            error= True
-            await ctx.author.send("A username cannot have spaces")
-        elif username in players.playersList.values():
-            error= True
-            await ctx.author.send("A username is already used")
-        else:
-            error= True
-            await ctx.author.send("A username should be only have letters")
         if error:
             await ctx.message.add_reaction('\U000026D4')
             return error
@@ -66,9 +53,9 @@ async def register(ctx, *, username= ""):
     user_id= ctx.author.id
     if user_id in register_status:
         if not __error():
-            players.new_player(user_id)
+            player.new_player(user_id)
             del register_status[user_id]
-        await ctx.author.send("Rgister")
+        await ctx.author.send("Welcome new adventurer")
     else:
         await ctx.author.send("No")
 
