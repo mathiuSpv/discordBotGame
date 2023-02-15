@@ -21,7 +21,7 @@ class PlayerStats(Base):
     player_dex = Column(Integer)
     player_int = Column(Integer)
 
-class PlayerFuntions():
+class PlayerFunctions():
     """Methods of Players"""
     def __init__(self, session):
         self.session = session
@@ -69,4 +69,4 @@ engine= create_engine('sqlite:///database/players.db')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session_player= Session()
-player= PlayerFuntions(session_player)
+player= PlayerFunctions(session_player)
