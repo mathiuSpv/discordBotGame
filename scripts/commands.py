@@ -12,20 +12,21 @@ register_status= {}
 
 @client.event
 async def on_ready():
-    await client.change_presence(activity= discord.Game(name= "Dark Era - Try to play \U000027A1  $start" ))
+    await client.change_presence(activity= discord.Game(name= "Andventure - Try to play \U000027A1  $start" ))
     print(f'{client.user} is on!')
 
 
 @client.command(aliases= ["clear"])
+@commands.has_permissions(administrator= True)
 async def cls(ctx):
     msg_list=[]
-    async for  message in ctx.channel.history(limit= None):
+    async for  message in ctx.channel.history(limit= 255):
         if not message.pinned:
             msg_list.append(message) 
     await ctx.channel.delete_messages(msg_list)
 
 @client.command()
-async def start(ctx, time= 15):
+async def start(ctx, time= 60):
     user_id= ctx.author.id
     register_status[user_id]= True
     await ctx.author.send("Para registrater debes colocar $register 'nombre'!\n (El comando se desabilita al pasar 1 minuto)")
@@ -40,7 +41,7 @@ async def start(ctx, time= 15):
 async def register(ctx):
     async def __error(*args, **kwargs):
         error= False
-        if player .get_user(ctx.author.id):
+        if player.get_user(ctx.author.id):
             error= True
             await ctx.author.send("You are already registered")
         if error:
@@ -58,6 +59,11 @@ async def register(ctx):
         await ctx.author.send("Welcome new adventurer")
     else:
         await ctx.author.send("No")
+        
+@client.command()
+async def mycommand(ctx):
+    embed = discord.Embed(title="Título del Embed", description="Descripción del Embed", color=0xFF5733)
+    await ctx.send(embed=embed)
 
 
 if __name__ == "__main__":
