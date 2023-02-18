@@ -5,3 +5,7 @@
 
 token.txt
 __pycache__
+.vscode
+
+#PYTHON FILES
+test.py
