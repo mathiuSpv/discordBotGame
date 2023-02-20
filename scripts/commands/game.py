@@ -7,20 +7,16 @@ _dir= dirname(dirname(abspath(__file__))); sys.path.append(_dir)
 from database.player import player as playerdb
 from database.levelstatment import level
 
-intents= discord.Intents.default()
-intents.message_content = True
-client= commands.Bot(command_prefix='$', intents= intents)
-
 class GameCmd(commands.Cog):
-    def __init__(self, client):
+    def __init__(self, client: commands.Bot):
         self.client= client
         
     @commands.Cog.listener()
-    async def on_ready():
-        print(f'        commands.game.py is on!')
+    async def on_ready(self):
+        print(f'>>        commands.game.py ready!')
 
     @commands.command()
-    async def newstart(ctx):
+    async def newstart(self, ctx: commands.Context):
         user_id= ctx.author.id
         if not playerdb.get_user(user_id):
             text= """ANDVENTURE is a RPG Turn in Discord Game\n
@@ -36,7 +32,7 @@ class GameCmd(commands.Cog):
             await ctx.message.add_reaction('\U0000274C')
             
     @commands.command()
-    async def stats(ctx):
+    async def stats(self, ctx: commands.Context):
         SPACE= '\u200b'
         user_id= ctx.author.id
         
@@ -67,21 +63,20 @@ class GameCmd(commands.Cog):
             reactions= ['\U0001F53C', '\U0001F53D', '\U0001F199', '\U0001F501', '\U00002705']
             for reaction in reactions: await message.add_reaction(reaction)
         
-        async def edit_bot_message(message):
+        async def edit_bot_embed(message):
             __text_level_base= f"**LEVEL {player_level['lvl']}\n  {SPACE*2}{player_level['exp']}/{level.get_exp_needed(player_level['lvl'])}**\n\n"
             __text_stats= f"""```
-    {pointers[0]} VIG  >>> {SPACE*2}  {player_stats['vig']} {__view_points_update('vig')}\n
-    {pointers[1]} END  >>> {SPACE*2}  {player_stats['end']} {__view_points_update('end')}\n
-    {pointers[2]} STR  >>> {SPACE*2}  {player_stats['str']} {__view_points_update('str')}\n
-    {pointers[3]} DEX  >>> {SPACE*2}  {player_stats['dex']} {__view_points_update('dex')}\n
-    {pointers[4]} INT  >>> {SPACE*2}  {player_stats['int']} {__view_points_update('int')}
-    ```"""
+{pointers[0]} VIG  >>> {SPACE*2}  {player_stats['vig']} {__view_points_update('vig')}\n
+{pointers[1]} END  >>> {SPACE*2}  {player_stats['end']} {__view_points_update('end')}\n
+{pointers[2]} STR  >>> {SPACE*2}  {player_stats['str']} {__view_points_update('str')}\n
+{pointers[3]} DEX  >>> {SPACE*2}  {player_stats['dex']} {__view_points_update('dex')}\n
+{pointers[4]} INT  >>> {SPACE*2}  {player_stats['int']} {__view_points_update('int')}```"""
             __text_stats_new= f"""```
-    {player_stats_new['vig']} \n
-    {player_stats_new['end']} \n
-    {player_stats_new['str']} \n
-    {player_stats_new['dex']} \n
-    {player_stats_new['int']}```"""
+{player_stats_new['vig']} \n
+{player_stats_new['end']} \n
+{player_stats_new['str']} \n
+{player_stats_new['dex']} \n
+{player_stats_new['int']}```"""
             __text_help=  f"""```\n
     🔼 >> Up Selector
     🔽 >> Down Selector
@@ -92,7 +87,7 @@ class GameCmd(commands.Cog):
             embed = discord.Embed(description= __text_level_base, color=0x9F00FF)
             embed.add_field(name= f"**STATS**         **POINTS**  >>  {player_points}", value= __text_stats)
             embed.add_field(name= "**NEW STATS**", value= __text_stats_new)
-            embed.add_field(name= "**UTILITY OF REACTIONS**", value= __text_help, inline= False)
+            embed.add_field(name= '', value= __text_help, inline= False)
             await message.edit(embed= embed)
         
         if playerdb.get_user(user_id) and not isinstance(ctx.channel, discord.DMChannel):
@@ -106,9 +101,9 @@ class GameCmd(commands.Cog):
             await multiple_reactions(message)
             stop= False
             while not stop:
-                await edit_bot_message(message)
+                await edit_bot_embed(message)
                 try:
-                    reaction, user = await client.wait_for('reaction_add', check= lambda r,u: u == ctx.author , timeout= 60)
+                    reaction, user = await self.client.wait_for('reaction_add', check= lambda r,u: u == ctx.author , timeout= 60)
                     await reaction.remove(user)
                 except asyncio.TimeoutError:
                     await message.delete()
@@ -139,5 +134,5 @@ class GameCmd(commands.Cog):
         await asyncio.sleep(3)
         await ctx.message.delete()
 
-def setup(bot):
-    bot.add_cogs(GameCmd(bot))
+async def setup(bot: commands.Bot):
+    await bot.add_cog(GameCmd(bot))

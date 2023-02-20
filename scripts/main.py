@@ -2,9 +2,11 @@ import discord
 import os
 from discord.ext import commands
 
-class InitBot(commands.Bot):
+class runBot(commands.Bot):
     def __init__(self) -> None:
-        super().__init__(command_prefix= '$',intents= discord.Intents.all())
+        intents= discord.Intents.default()
+        intents.message_content = True
+        super().__init__(command_prefix= '$',intents= intents) #Might be useful user intents= discord.Intents.all()
         self.initial_extensions= list()
         
         folder_notrd= ['database','test.py','main.py']
@@ -12,21 +14,21 @@ class InitBot(commands.Bot):
             if folder not in folder_notrd:
                 for filename in os.listdir(f'scripts/{folder}'):
                     if filename.endswith('.py'):
-                        cog= f'scripts.{folder}.{filename[::-3]}'
+                        cog= f'{folder}.{filename[:-3]}'
                         self.initial_extensions.append(cog)
                     
-                    
-    async def setup_hook(self):
+    async def setup_hook(self) -> None:
         try:
-            for extension in self.extensions:
+            for extension in self.initial_extensions:
                 await self.load_extension(extension)
-                print(extension)
+                print(f'>>      {extension} is loading...')
         except Exception as exc:
-            print(exc)
-        return await super().setup_hook()
+            print(f'>>      {exc} Raise error in {extension}')
     
-    async def on_ready(self):
-        print("on")
-                    
-                    
-client= InitBot()   
+    async def on_ready(self) -> None:
+        await client.change_presence(activity= discord.Game(name= "PLAY RPG \U000027A1  $newstart" ))
+
+if __name__ == '__main__':
+    client= runBot()
+    TOKEN= open('token.txt', mode='r').readline()
+    client.run(TOKEN)
