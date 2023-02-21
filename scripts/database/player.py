@@ -32,7 +32,9 @@ def session_player():
     session = sessionmaker(bind=engine)
     session= session()
     return session
+
 __session= session_player()
+
 class PlayerFunctions():
     
     """Methods from Players"""
@@ -92,6 +94,7 @@ class PlayerFunctions():
         self.session.close()
         return {'vig': player.vigor, 'end': player.endurance,
                 'str': player.strenght, 'dex': player.dexterity, 'int': player.intelligence}
+
 player= PlayerFunctions(__session)
 
 

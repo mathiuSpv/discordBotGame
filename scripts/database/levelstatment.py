@@ -17,7 +17,9 @@ def session_level():
     session = sessionmaker(bind=engine)
     session= session()
     return session    
+
 __session= session_level()
+
 class LevelFunctions():
     
     def __init__(self, session):
@@ -47,6 +49,7 @@ class LevelFunctions():
         if lvl is not None:
             return lvl.points_add
         return None
+
 level= LevelFunctions(__session)
 
 
