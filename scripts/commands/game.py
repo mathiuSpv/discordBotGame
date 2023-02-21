@@ -7,13 +7,38 @@ _dir= dirname(dirname(abspath(__file__))); sys.path.append(_dir)
 from database.player import player as playerdb
 from database.levelstatment import level
 
+
 class GameCmd(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client= client
         
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'>>        commands.game.py ready!')
+        print(f'>>      commands.Game ready!')
+
+    @commands.command(name= 'playspace', aliases= ['cps'])
+    @commands.has_permissions(administrator= True)
+    async def create_play_spaces(self, ctx: commands.Context):
+        async def create_rooms(*args, **kwargs):
+            category= await guild.create_category(name= "rpg")
+            await guild.create_text_channel(name= "commands-game-center", category= category)
+            await guild.create_text_channel(name= "enemies-spawn", category= category)
+        
+        async def delete_rooms(*args, **kwargs):
+            channels= category.channels
+            for channel in channels:
+                await channel.delete()
+            await category.delete()
+        
+        guild= self.client.get_guild(ctx.guild.id)
+        category = discord.utils.get(guild.categories, name="rpg")
+        print(category)
+        if category is None:
+            await create_rooms()
+        else:
+            await delete_rooms()
+            await create_rooms()
+
 
     @commands.command()
     async def newstart(self, ctx: commands.Context):
@@ -59,7 +84,7 @@ class GameCmd(commands.Cog):
             player_stats_restart= dict(player_stats)
             return player_points, player_stats_restart
         
-        async def multiple_reactions(message):
+        async def multiple_reactions(message: discord.Message):
             reactions= ['\U0001F53C', '\U0001F53D', '\U0001F199', '\U0001F501', '\U00002705']
             for reaction in reactions: await message.add_reaction(reaction)
         
